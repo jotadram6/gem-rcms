@@ -1,11 +1,14 @@
 package rcms.fm.gem.gemLevelOne;
 
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
 import rcms.fm.gem.gemLevelOne.util.GEMUtil;
 import rcms.fm.fw.parameter.CommandParameter;
 import rcms.fm.fw.parameter.ParameterSet;
+import rcms.fm.fw.parameter.type.IntegerT;
+import rcms.fm.fw.parameter.type.StringT;
 import rcms.fm.fw.user.UserActionException;
 import rcms.fm.fw.user.UserFunctionManager;
 import rcms.fm.resource.QualifiedGroup;
@@ -18,7 +21,11 @@ import rcms.statemachine.definition.State;
 import rcms.statemachine.definition.StateMachineDefinitionException;
 import rcms.fm.resource.StateVector;
 import rcms.fm.resource.StateVectorCalculation;
+
 import rcms.util.logger.RCMSLogger;
+import rcms.util.logsession.LogSessionConnector;
+import rcms.util.logsession.LogSessionException;
+
 import rcms.utilities.runinfo.RunInfo;
 
 
@@ -41,8 +48,8 @@ public class GEMFunctionManager extends UserFunctionManager {
      */
     public XdaqApplicationContainer containerXdaqApplication = null;
 
-    public XdaqApplicationContainer cEVM = null;
     public XdaqApplicationContainer containerXdaqExecutive = null;
+
     public XdaqApplicationContainer containerGEMSupervisor = null;
     public XdaqApplicationContainer containerTCDSControl   = null;
     public XdaqApplicationContainer containerGEMRunInfoServer = null;
@@ -60,7 +67,6 @@ public class GEMFunctionManager extends UserFunctionManager {
     public XdaqApplicationContainer containerFEDStreamer         = null;
     public XdaqApplicationContainer containerPeerTransportATCP   = null;
 
-
     /**
      * <code>containerFunctionManager</code>: container of FunctionManagers
      * in the running Group.
@@ -73,14 +79,32 @@ public class GEMFunctionManager extends UserFunctionManager {
      */
     public State calcState = null;
 
+    // string containing details on the setup from where this FM was started
+    public String RunSetupDetails  = "empty";
+    public String FMfullpath       = "empty";
+    public String FMname           = "empty";
+    public String FMurl            = "empty";
+    public String FMuri            = "empty";
+    public String FMrole           = "empty";
+    public String FMpartition      = "empty";
+    public Date   FMtimeofstart;
+    public String utcFMtimeofstart = "empty";
+
+    // set from the controlled EventHandler
+    public String  RunType = "";
+    public Integer RunNumber = 0;
+    public Integer CachedRunNumber = 0;
+
+    // connector to log session db, used to create session identifiers
+    public LogSessionConnector logSessionConnector;
+
     // RunInfo stuff:
-    public RunInfo _gemRunInfo        = null;
-    public RunInfo _gemRunInfoDESTROY = null;
+    // connector to the RunInfo database
+    public RunInfo GEMRunInfo        = null;
+    public RunInfo GEMRunInfoDESTROY = null;
 
     // utlitity functions handle
-    public GEMUtil _gemUtil;
-
-
+    public GEMUtil GEMUtil;
 
     // The GEM FED ranges
     protected Boolean GEMin = false;
@@ -111,7 +135,7 @@ public class GEMFunctionManager extends UserFunctionManager {
 	System.out.println(message);
 	logger.debug(      message);
 
-	_gemUtil.killOrphanedExecutives();
+	GEMUtil.killOrphanedExecutives();
 
 	message = "[GEM] gemLevelOneFM createAction executed.";
 	System.out.println(message);
@@ -180,7 +204,7 @@ public class GEMFunctionManager extends UserFunctionManager {
 			      rcms.fm.fw.EventHandlerException {
 
 	//instantiate utility
-	_gemUtil = new GEMUtil(this);
+	GEMUtil = new GEMUtil(this);
 
 	// Set first of all the State Machine Definition
 	setStateMachineDefinition(new GEMStateMachineDefinition());
@@ -195,10 +219,10 @@ public class GEMFunctionManager extends UserFunctionManager {
 	addEventHandler(new GEMErrorHandler());
 
 	// get session ID
-	getSessionId();
+	// getSessionId();
 
 	// call renderers
-	_gemUtil.renderMainGui();
+	GEMUtil.renderMainGui();
     }
 
     /**
@@ -207,6 +231,32 @@ public class GEMFunctionManager extends UserFunctionManager {
      */
     public boolean hasCustomGUI() {
 	return true;
+    }
+
+    // get a session Id
+    @SuppressWarnings("unchecked")
+        protected void getSessionId() {
+        String user = getQualifiedGroup().getGroup().getDirectory().getUser();
+        String description = getQualifiedGroup().getGroup().getDirectory().getFullPath();
+        int sessionId = 0;
+
+        logger.debug("[GEM base] Log session connector: " + logSessionConnector );
+
+        if (logSessionConnector != null) {
+            try {
+                sessionId = logSessionConnector.createSession( user, description );
+                logger.debug("[GEM base] New session Id obtained =" + sessionId );
+            }
+            catch (LogSessionException e1) {
+                logger.warn("[GEM base] Could not get session ID, using default = " + sessionId + ". Exception: ",e1);
+            }
+        }
+        else {
+            logger.warn("[GEM base] logSessionConnector = " + logSessionConnector + ", using default = " + sessionId + ".");
+        }
+
+        // put the session ID into parameter set
+        getParameterSet().get(GEMParameters.SID).setValue(new IntegerT(sessionId));
     }
 
 }
