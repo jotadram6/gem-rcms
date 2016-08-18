@@ -51,6 +51,8 @@ public class GEMFunctionManager extends UserFunctionManager {
     public XdaqApplicationContainer containerXdaqExecutive = null;
 
     public XdaqApplicationContainer containerGEMSupervisor = null;
+
+    public XdaqApplicationContainer containerGEMSupervisor = null;
     public XdaqApplicationContainer containerTCDSControl   = null;
     public XdaqApplicationContainer containerGEMRunInfoServer = null;
 
@@ -58,8 +60,8 @@ public class GEMFunctionManager extends UserFunctionManager {
      * copied from HCAL, possibly able to incorporate them for use
      * in the GEM system
      */
-    public XdaqApplicationContainer containerEVM                 = null;
-    public XdaqApplicationContainer containerBU                  = null;
+    public XdaqApplicationContainer containerEVM                 = null;  // maybe only for use with uFEDKIT
+    public XdaqApplicationContainer containerBU                  = null;  // maybe only for use with uFEDKIT
     public XdaqApplicationContainer containerRU                  = null;
     public XdaqApplicationContainer containerFUResourceBroker    = null;
     public XdaqApplicationContainer containerFUEventProcessor    = null;
@@ -201,7 +203,7 @@ public class GEMFunctionManager extends UserFunctionManager {
     public void init() throws StateMachineDefinitionException,
 			      rcms.fm.fw.EventHandlerException {
 
-	//instantiate utility
+	// instantiate utility
 	GEMUtil = new GEMUtil(this);
 
 	// Set first of all the State Machine Definition

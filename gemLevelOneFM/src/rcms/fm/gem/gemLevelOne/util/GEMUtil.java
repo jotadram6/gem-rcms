@@ -56,7 +56,7 @@ import rcms.utilities.runinfo.RunInfo;
 import rcms.utilities.runinfo.RunInfoException;
 
 public class GEMUtil {
-    
+
     /**
      * <code>logger</code>: log4j logger.
      */
@@ -109,33 +109,33 @@ public class GEMUtil {
       public void updateRunKeys() {
 
       }
-	
+
       private boolean checkFedConsistency() {}
 
       public boolean ttsStatusActive() {}
     */
     // check status
-    // convention is 
+    // convention is
     // bit mask for fed status is
     // bit     1  /  0
     // 0 SLINK ON / OFF
     // 1 TTC   ON / OFF
     // 2 & 0 SLINK NA / BROKEN
-    // 3 & 1 TTC   NA / BROKEN 
+    // 3 & 1 TTC   NA / BROKEN
     // 4 NO CONTROL
-    // 5 FMM status bit 0 
+    // 5 FMM status bit 0
     // 6 FMM status bit 1
     // 7 FMM status bit 2
     // 8 FMM status bit 3
     // 9 SLINK backpressure status OFF
     //10 SLINK backpressure status ON
-	
+
 
     /**
      * Put a shutdown event on the queue to close the publisher thread.
      */
     public void destroy() throws InterruptedException {
-	    
+
 	Vector v = new Vector();
 	//v.add(new ShutDownPublisher());
 	//publisherQueue.add(v);
@@ -148,11 +148,11 @@ public class GEMUtil {
 	String response = "";
 
 	// check the _xmlRscConf and _documentConf are filled
-	if (xmlRscConf == null || xmlRscConf.equals("") ) 
+	if (xmlRscConf == null || xmlRscConf.equals("") )
 	    return response;
 
 	// check for a valid argument
-	if (elementName == null || elementName.equals("") ) 
+	if (elementName == null || elementName.equals("") )
 	    return response;
 	int beginIndex = xmlRscConf.indexOf("<"+elementName+">") + elementName.length() + 2;
 	int endIndex   = xmlRscConf.indexOf("</"+elementName+">");
@@ -183,7 +183,7 @@ public class GEMUtil {
 
     }
 
-	
+
     /**
      * Kill orphaned XDAQ executives
      */
@@ -206,7 +206,7 @@ public class GEMUtil {
             +pathToOrphanHandler+"' will be used.";
 	System.out.println(message);
 	logger.debug(      message);
-	    
+
 	List<QualifiedResource> jobcontrols = functionManager.getQualifiedGroup().seekQualifiedResourcesOfType(new JobControl());
 	for (QualifiedResource jc: jobcontrols) {
 	    try{
@@ -230,8 +230,8 @@ public class GEMUtil {
 			    logger.debug(message);
 			    orphanHandlingJIDs.add( jid );
 			} else {
-                            message = "[GEMUtil killOrphanedExecutives] XdaqExecutiveConfiguration is null for " + exe.toString() 
-			    logger.error(message); 
+                            message = "[GEMUtil killOrphanedExecutives] XdaqExecutiveConfiguration is null for " + exe.toString();
+			    logger.error(message);
 			}
 		    }
 		}
@@ -275,7 +275,7 @@ public class GEMUtil {
 	  // HWCFG_TRG_NAME parameter ------------------
 	  // this is used with the hwcfg DB to identify the trigger
 	  // and find ttc partitions. not used for role name and alike.
-		
+
 	  // debug
           message = "[GEMUtil prepareHwcfgKey] prepareHwcfgKey() from DAQ hwcfgKey = " +
           functionManager.getParameterSet().get(GEMParameters.HWCFG_KEY).getValue().toString();
@@ -295,7 +295,7 @@ public class GEMUtil {
 
 	  // put it into the corresponding parameter
 	  functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.HWCFG_GEM_NAME, new StringT(hwcfgGEMName)) );
-	*/	
+	*/
     }
 
     /**
@@ -303,17 +303,17 @@ public class GEMUtil {
      *       wait before resuming the thread.
      */
     static public void wait(int ms) {
-	    
+
 	try {
 	    Thread.sleep(ms);
 	} catch (InterruptedException e) {
 	    e.printStackTrace();
 	}
-	    
+
     }
 
     public void setParameterFromProperties() {
-		
+
 	List<ConfigProperty> lp = functionManager.getGroup().getThisResource().getProperties();
         String message = "[GEMUtil setParameterFromProperties] start properties";
 	logger.info(message);
@@ -328,7 +328,7 @@ public class GEMUtil {
 	    }
 	}
     }
-	
+
     public void renderMainGui() {
 
 	GuiStatePanel guiState = new GuiStatePanel(functionManager);

@@ -4,12 +4,12 @@ import rcms.statemachine.definition.Input;
 
 /**
  * Definition of GEM Level 1 Function Manager Commands
- * 
+ *
  * @iriginalauthor Andrea Petrucci, Alexander Oh, Michele Gulmini
  * @author Jared Sturdy
  */
 public class GEMInputs {
-    
+
     // Defined commands for the level 1 Function Manager
     public static final Input INITIALIZE    = new Input("Initialize"   );
     public static final Input SETINITIAL    = new Input("SetInitial"   );
@@ -34,11 +34,11 @@ public class GEMInputs {
     // special degraded commands
     public static final Input SETRUNNINGDEGRADED = new Input("SetRunningDegraded");
     public static final Input SETRESUMEDDEGRADED = new Input("SetResumedDegraded");
-    
+
     public static final Input SETRUNNINGSOFTERRORDETECTED = new Input("SetRunningSoftErrorDetected");
     public static final Input SETRESUMEDSOFTERRORDETECTED = new Input("SetResumedSoftErrorDetected");
     public static final Input FIXSOFTERROR                = new Input("FixSoftError"               );
-    
+
     // TTS states
     public static final Input PREPARE_TTSTEST_MODE = new Input("PrepareTTSTestMode");
     public static final Input SETTTSTEST_MODE      = new Input("SetTTSTestMode");
@@ -46,7 +46,7 @@ public class GEMInputs {
 
     // public static final Input TTSTEST_MODE         = new Input("TTSTestMode");
     // public static final Input SETTESTING_TTS       = new Input("SetTestingTTS");
-    
+
     // Go to error
     public static final Input SETERROR = new Input("SetError");
 

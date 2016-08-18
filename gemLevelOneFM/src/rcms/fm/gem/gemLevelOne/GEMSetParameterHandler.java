@@ -14,21 +14,21 @@ import rcms.util.logger.RCMSLogger;
 
 /**
  * Defined Level 1 Function Manager parameters.
- * 
+ *
  * Standard parameter definitions for Level 1 Function Manager
- * 
+ *
  * SID					: Session Identifier
  * STATE				: State name the function manager is currently in
- * RUN_TYPE				: String identifying the global run type 
+ * RUN_TYPE				: String identifying the global run type
  * RUN_MODE				: String identifying the global run mode
  * GLOBAL_CONF_KEY		 	: String representing the global configuration key
  * RUN_NUMBER				: Run number of current run
  * ACTION_MSG 				: Short description of current activity, if any
  * ERROR_MSG 				: In case of an error contains a description of the error
  * COMPLETION 				: Completion of an activity can be signaled through this numerical value 0 < PROGRESS_BAR < 1
- * 
+ *
  * For more details => https://twiki.cern.ch/twiki/bin/view/CMS/StdFMParameters
- * 
+ *
  * @author Andrea Petrucci, Alexander Oh, Michele Gulmini
  *
  */
