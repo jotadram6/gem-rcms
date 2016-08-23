@@ -158,7 +158,6 @@ public class GEMEventHandler extends UserStateNotificationHandler {
     static RCMSLogger logger = new RCMSLogger(GEMEventHandler.class);
 
     GEMFunctionManager functionManager = null;
-    public LogSessionConnector logSessionConnector;  // Connector for logsession DB
 
     private QualifiedGroup qualifiedGroup  = null;
     public static final String XDAQ_NS = "urn:xdaq-soap:3.0";
@@ -225,9 +224,6 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 
 	// instantiate utility
 	GEMUtil = new GEMUtil(functionManager);
-
-	ttsSetter = new TTSSetter();
-	ttsSetterFuture = null;
 
 	// debug
 	logger.debug("[GEMEventHandler init] GEM levelOneFM init() called: functionManager=" + functionManager );
@@ -1029,11 +1025,6 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 		repeat = ((IntegerT)parameterSet.get(GEMParameters.TTS_TEST_SEQUENCE_REPEAT).getValue()).getInteger();
 	    }
 
-	    ttsSetter.config(crate, slot, bits, repeat);
-	    if (ttsSetterFuture == null) {
-		ttsSetterFuture = scheduler.scheduleWithFixedDelay(ttsSetter, 0, 10, MILLISECONDS);
-	    }
-
 	    // leave intermediate state
 	    functionManager.fireEvent( GEMInputs.SETTTSTEST_MODE );
 
@@ -1182,46 +1173,6 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 	}
 
 	return slot;
-    }
-
-    private class TTSSetter implements Runnable {
-	private int crate, slot, bits;
-	private int repeat = 0;
-
-	public synchronized void config(int crate, int slot, int bits, int repeat) {
-	    this.crate  = crate;
-	    this.slot   = slot;
-	    this.bits   = bits;
-	    this.repeat = repeat * 16;
-
-	    if (this.repeat == 0) {
-		this.repeat = 1;
-	    }
-	}
-
-	public void run() {
-	    if (repeat > 0) {
-		try {
-                    logger.debug("TTSSetter: " + crate + " " + slot + " " + bits + " " + repeat);
-
-                    svTTSParameter.setValue("TTSCrate", "" + crate);
-                    svTTSParameter.setValue("TTSSlot", "" + slot);
-                    svTTSParameter.setValue("TTSBits", "" + bits);
-                    svTTSParameter.send();
-                    functionManager.containerGEMSupervisor.execute(new Input("SetTTS"));
-
-                    bits = (bits + 1) % 16;  // prepare for the next shot.
-                    repeat--;
-
-                    if (repeat == 0) {
-                        functionManager.fireEvent(GEMInputs.SETTTSTEST_MODE);
-                    }
-		} catch (Exception e) {
-		    logger.error("[GEMEventHandler run] TTSSetter", e);
-		    functionManager.fireEvent(GEMInputs.SETERROR);
-		}
-	    }
-	}
     }
 }
 

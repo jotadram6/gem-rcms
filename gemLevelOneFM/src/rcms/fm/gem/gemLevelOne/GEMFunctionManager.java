@@ -46,14 +46,10 @@ public class GEMFunctionManager extends UserFunctionManager {
     /**
      * define the xdaq application containers
      */
-    public XdaqApplicationContainer containerXdaqApplication = null;
-
-    public XdaqApplicationContainer containerXdaqExecutive = null;
-
-    public XdaqApplicationContainer containerGEMSupervisor = null;
-
-    public XdaqApplicationContainer containerGEMSupervisor = null;
-    public XdaqApplicationContainer containerTCDSControl   = null;
+    public XdaqApplicationContainer containerXdaqApplication  = null;
+    public XdaqApplicationContainer containerXdaqExecutive    = null;
+    public XdaqApplicationContainer containerGEMSupervisor    = null;
+    public XdaqApplicationContainer containerTCDSControl      = null;
     public XdaqApplicationContainer containerGEMRunInfoServer = null;
 
     /**

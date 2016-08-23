@@ -72,7 +72,7 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	addInput(GEMInputs.RESET     );
 	addInput(GEMInputs.SETERROR    );
 	addInput(GEMInputs.PREPARE_TTSTEST_MODE);
-	addInput(GEMInputs.TEST_TTS            );
+	addInput(GEMInputs.TEST_TTS    );
 	addInput(GEMInputs.COLDRESET   );
         addInput(GEMInputs.FIXSOFTERROR);
 
