@@ -12,88 +12,88 @@
 <rcms.control:menuCreator />
 <html>
 
-<head>
-<meta Http-Equiv="Cache-Control" Content="no-cache">
-<meta Http-Equiv="Pragma" Content="no-cache">
-<meta Http-Equiv="Expires" Content="0">
+    <head>
+        <meta Http-Equiv="Cache-Control" Content="no-cache">
+        <meta Http-Equiv="Pragma" Content="no-cache">
+        <meta Http-Equiv="Expires" Content="0">
 
-<TITLE>"GEM Function Manager"</TITLE>
+        <TITLE>"GEM Function Manager"</TITLE>
 
-<link rel="StyleSheet" href="../css/common.css" type="text/css" />
-<link rel="StyleSheet" href="../css/control.css" type="text/css" />
+        <link rel="StyleSheet" href="../css/common.css" type="text/css" />
+        <link rel="StyleSheet" href="../css/control.css" type="text/css" />
 
-<rcms.control:customResourceRenderer indentation="1" type="css" path="/css/myControlPanel.css" />
-<rcms.control:customResourceRenderer indentation="1" type="js" path="/js/myControl.js" />
-<rcms.control:customResourceRenderer indentation="1" type="js" path="/js/ajaxRequest.js" />
+        <rcms.control:customResourceRenderer indentation="1" type="css" path="/css/myControlPanel.css" />
+        <rcms.control:customResourceRenderer indentation="1" type="js" path="/js/myControl.js" />
+        <rcms.control:customResourceRenderer indentation="1" type="js" path="/js/ajaxRequest.js" />
 
-<script type="text/javascript" src="../js/stateNotification.js"></script>
-<script type="text/javascript" src="../js/common.js"></script>
-<script type="text/javascript" src="../js/globalParameters.js"></script>
-<script type="text/javascript" src="../js/control.js"></script>
-<script type="text/javascript" src="../yui/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="../yui/animation/animation-min.js"></script>
+        <script type="text/javascript" src="../js/stateNotification.js"></script>
+        <script type="text/javascript" src="../js/common.js"></script>
+        <script type="text/javascript" src="../js/globalParameters.js"></script>
+        <script type="text/javascript" src="../js/control.js"></script>
+        <script type="text/javascript" src="../yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script type="text/javascript" src="../yui/animation/animation-min.js"></script>
 
-<!-- Custom javascript section begin -->
-<script type="text/javascript">
-		<rcms.control:onLoadJSRenderer 
-		reloadOnStateChange="false" 
-		commandButtonCssClass="MyControlButton" 
-		commandParameterCheckBoxTitle="&nbsp;Show Command Parameter Section"
-		commandParameterCssClass="label_left_black" 
-		indentation="2"/>
-		
-		<rcms.control:buttonsJSRenderer indentation="2"/>
-		<rcms.notification:jSRenderer indentation="2"/>
-		<rcms.globalParameter:jSRenderer indentation="2"/>
-</script>
+        <!-- Custom javascript section begin -->
+        <script type="text/javascript">
+	 <rcms.control:onLoadJSRenderer 
+	 reloadOnStateChange="false" 
+	 commandButtonCssClass="MyControlButton" 
+	 commandParameterCheckBoxTitle="&nbsp;Show Command Parameter Section"
+	 commandParameterCssClass="label_left_black" 
+	 indentation="2"/>
+	 
+	 <rcms.control:buttonsJSRenderer indentation="2"/>
+	 <rcms.notification:jSRenderer indentation="2"/>
+	 <rcms.globalParameter:jSRenderer indentation="2"/>
+        </script>
 
-<!-- Custom javascript section end -->
-</head>
-<body onLoad="myInit();" class="body">
-<!--  switch back to a bigger font size -->
-<font size=3> <!-- Table T1 begin -->
+        <!-- Custom javascript section end -->
+    </head>
+    <body onLoad="myInit();" class="body">
+        <!--  switch back to a bigger font size -->
+        <font size=3> <!-- Table T1 begin -->
 
-<p>
-<rcms.globalParameter:getParameterMap fmParameterContainer="pars" />
-</p>
+            <p>
+                <rcms.globalParameter:getParameterMap fmParameterContainer="pars" />
+            </p>
 
-<!--  conditional dummy span for sound support -->
-<script type="text/javascript"></script>
+            <!--  conditional dummy span for sound support -->
+            <script type="text/javascript"></script>
 
-<div class="ParaTableName"></div>	
-<form name="FMPilotForm" id="FMPilotForm" method="POST" action="../../gui/servlet/FMPilotServlet?PAGE=/gui/jsp/controlPanel.jsp">
-	
-	<input type="hidden" id="globalParameterName3 "name="globalParameterName3" value="" />
-	<input type="hidden" id="globalParameterValue3" name="globalParameterValue3" value="" />
-	<input type="hidden" id="globalParameterType3" name="globalParameterType3" value="" />
-	
-	<rcms.control:actionHiddenInputRenderer indentation="4" /> 
-	<rcms.control:commandHiddenInputRenderer indentation="4" /> 
-	<rcms.notification:hiddenInputRenderer indentation="4" /> 
+            <div class="ParaTableName"></div>	
+            <form name="FMPilotForm" id="FMPilotForm" method="POST" action="../../gui/servlet/FMPilotServlet?PAGE=/gui/jsp/controlPanel.jsp">
+	        
+	        <input type="hidden" id="globalParameterName3 "name="globalParameterName3" value="" />
+	        <input type="hidden" id="globalParameterValue3" name="globalParameterValue3" value="" />
+	        <input type="hidden" id="globalParameterType3" name="globalParameterType3" value="" />
+	        
+	        <rcms.control:actionHiddenInputRenderer indentation="4" /> 
+	        <rcms.control:commandHiddenInputRenderer indentation="4" /> 
+	        <rcms.notification:hiddenInputRenderer indentation="4" /> 
 
-<TABLE class="HeaderTable" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
-	<tr>
-	<td><a class="MenuLinkEnabled" href="./DiagnosticServlet"><B>Diagnostic Page</B></a></td>
-        <td><a class="MenuLinkEnabled" href="../../../Collector/Collector"><B>Logging Collector</B></a></td>
-        <td><a class="MenuLinkEnabled" href="./MonitoringToolsServlet"><B>Monitoring Tools</B></a></td>
-        <td><a class="MenuLinkEnabled" href="./RunInfoServlet"><B>Run Info</B></a></td>
-        <td><a class="MenuLinkEnabled" href="./RunningConfigurationServlet"><B>Running Configurations</B></a></td>
-        <td><a class="MenuLinkEnabled" href="./LogoutServlet"><B>Logout</B></a></td>
-	</tr>
+                <TABLE class="HeaderTable" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
+	            <tr>
+	                <td><a class="MenuLinkEnabled" href="./DiagnosticServlet"><B>Diagnostic Page</B></a></td>
+                        <td><a class="MenuLinkEnabled" href="../../../Collector/Collector"><B>Logging Collector</B></a></td>
+                        <td><a class="MenuLinkEnabled" href="./MonitoringToolsServlet"><B>Monitoring Tools</B></a></td>
+                        <td><a class="MenuLinkEnabled" href="./RunInfoServlet"><B>Run Info</B></a></td>
+                        <td><a class="MenuLinkEnabled" href="./RunningConfigurationServlet"><B>Running Configurations</B></a></td>
+                        <td><a class="MenuLinkEnabled" href="./LogoutServlet"><B>Logout</B></a></td>
+	            </tr>
 
-</TABLE>
+                </TABLE>
 
-<TABLE align="center" class="HeaderTable" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="50%">
-<tr>
-	<!--  REFRESH BUTTON --> 
-	<TD align="center" bgcolor="#ADFF2F">
-	<rcms.control:refreshButtonRenderer
-		cssClass="button1" onClickFunction="onUpdatedRefreshButton()"
-		name="Refresh" indentation="10" />
-	</TD>
-	
-	<TD align="center" bgcolor="#4682B4">
-	<rcms.control:createButtonRenderer cssClass="button1"
+                <TABLE align="center" class="HeaderTable" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="50%">
+                    <tr>
+	                <!--  REFRESH BUTTON --> 
+	                <TD align="center" bgcolor="#ADFF2F">
+	                    <rcms.control:refreshButtonRenderer
+cssClass="button1" onClickFunction="onUpdatedRefreshButton()"
+name="Refresh" indentation="10" />
+	                </TD>
+	                
+	                <TD align="center" bgcolor="#4682B4">
+	                    <rcms.control:createButtonRenderer cssClass="button1"
 	onClickFunction="onCreateButton()" name="Create" indentation="10" /> 
 	<rcms.control:attachButtonRenderer cssClass="button1" 
 	onClickFunction="onAttachButton()" name="Attach"indentation="10" /> 

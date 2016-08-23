@@ -4,12 +4,12 @@ import rcms.statemachine.definition.State;
 
 /**
  * Defined GEM Level 1 Function Manager states.
- * 
+ *
  * @originalauthor Andrea Petrucci, Alexander Oh, Michele Gulmini
  * @author Jared Sturdy
  */
 public final class GEMStates {
-    
+
     // Defined steady and transitional states for Level 1 Function Manager
     public static final State ENABLING     = new State("Enabling"    );
     public static final State ENABLED      = new State("Enabled"     );
@@ -28,18 +28,18 @@ public final class GEMStates {
     public static final State RECOVERING   = new State("Recovering"  );
     public static final State RESETTING    = new State("Resetting"   );
     public static final State ERROR        = new State("Error"       );
-    
+
     public static final State PREPARING_TTSTEST_MODE = new State("PreparingTTSTestMode");
     public static final State TTSTEST_MODE           = new State("TTSTestMode"         );
     public static final State TESTING_TTS            = new State("TestingTTS"          );
-    
-    
+
+
     // Defined XDAQ EVB States
     //public static final State XDAQHALTED = new State("Halted");
-    
+
     //public static final State XDAQREADY = new State("Ready");
-    
+
     //public static final State XDAQENABLED = new State("Enabled");
-    
+
     //public static final State UNDEFINED = new State("Undefined");
 }

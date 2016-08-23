@@ -16,15 +16,17 @@ import rcms.fm.resource.qualifiedresource.XdaqApplicationContainer;
 import rcms.fm.resource.qualifiedresource.XdaqExecutive;
 import rcms.statemachine.definition.State;
 import rcms.statemachine.definition.StateMachineDefinitionException;
+import rcms.fm.resource.StateVector;
+import rcms.fm.resource.StateVectorCalculation;
 import rcms.util.logger.RCMSLogger;
 import rcms.utilities.runinfo.RunInfo;
 
 
 /**
  * Function Machine for controlling the GEM Level 1 Function Manager.
- * 
+ *
  * @author Andrea Petrucci, Alexander Oh, Michele Gulmini
- * modified for use in the GEM system by Jared Sturdy
+ * @maintainer Jared Sturdy
  *
  */
 public class GEMFunctionManager extends UserFunctionManager {
@@ -41,10 +43,10 @@ public class GEMFunctionManager extends UserFunctionManager {
 
     public XdaqApplicationContainer cEVM = null;
     public XdaqApplicationContainer containerXdaqExecutive = null;
-    public XdaqApplicationContainer containergemSupervisor = null;
-    public XdaqApplicationContainer containerTTCciControl  = null;
+    public XdaqApplicationContainer containerGEMSupervisor = null;
     public XdaqApplicationContainer containerTCDSControl   = null;
-    
+    public XdaqApplicationContainer containerGEMRunInfoServer = null;
+
     /**
      * copied from HCAL, possibly able to incorporate them for use
      * in the GEM system
@@ -57,8 +59,7 @@ public class GEMFunctionManager extends UserFunctionManager {
     public XdaqApplicationContainer containerStorageManager      = null;
     public XdaqApplicationContainer containerFEDStreamer         = null;
     public XdaqApplicationContainer containerPeerTransportATCP   = null;
-    public XdaqApplicationContainer containergemRunInfoServer    = null;
-    
+
 
     /**
      * <code>containerFunctionManager</code>: container of FunctionManagers
@@ -101,7 +102,7 @@ public class GEMFunctionManager extends UserFunctionManager {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rcms.statemachine.user.UserStateMachine#createAction()
      * This method is called by the framework when the Function Manager is created.
      */
@@ -116,7 +117,7 @@ public class GEMFunctionManager extends UserFunctionManager {
 	System.out.println(message);
 	logger.debug(      message);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see rcms.statemachine.user.UserStateMachine#destroyAction()
@@ -151,9 +152,9 @@ public class GEMFunctionManager extends UserFunctionManager {
 
 	for (QualifiedResource r: list) {
 	    logger.debug("==== killing " + r.getURI());
-	    
+
 	    FunctionManager fm = (FunctionManager)r;
-	    
+
 	    if (fm.isInitialized()) {
 		try {
 		    fm.destroy();
@@ -162,7 +163,7 @@ public class GEMFunctionManager extends UserFunctionManager {
 		}
 	    }
 	}
-	
+
 	message = "[GEM] gemLevelOneFM destroyAction executed";
 	System.out.println(message);
 	logger.debug(      message);
@@ -189,7 +190,7 @@ public class GEMFunctionManager extends UserFunctionManager {
 
 	// add SetParameterHandler
 	addEventHandler(new GEMSetParameterHandler());
-		
+
 	// Add error handler
 	addEventHandler(new GEMErrorHandler());
 
@@ -203,7 +204,7 @@ public class GEMFunctionManager extends UserFunctionManager {
     /**
      * Returns true if custom GUI is required, false otherwise
      * @return true, because GEMFunctionManager class requires user code
-     */	
+     */
     public boolean hasCustomGUI() {
 	return true;
     }

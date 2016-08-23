@@ -11,19 +11,19 @@ import rcms.statemachine.definition.StateMachineDefinitionException;
 
 /**
  * This class defines the Finite State Machine for the GEM level 1 Function Manager.
- * 
+ *
  * The actual definition of the State Machine must be put in the "init" method.
- * 
+ *
  * @originalauthor Andrea Petrucci, Alexander Oh, Michele Gulmini
  * @author Jared Sturdy
  */
 public class GEMStateMachineDefinition extends UserStateMachineDefinition {
-    
+
     public GEMStateMachineDefinition() throws StateMachineDefinitionException {
 	//
 	// Defines the States for this Finite State Machine.
 	//
-	
+
 	// steady states
 	addState(GEMStates.INITIAL     );
 	addState(GEMStates.ENABLED     );
@@ -34,7 +34,7 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	addState(GEMStates.ERROR       );
 
 	addState(GEMStates.TTSTEST_MODE);
-		
+
 	// transitional states
 	addState(GEMStates.INITIALIZING);
 	addState(GEMStates.ENABLING    );
@@ -72,7 +72,7 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 
 	addInput(GEMInputs.TTSTEST_MODE);
 	addInput(GEMInputs.TEST_TTS    );
-		
+
 	// The SETERROR Input moves the FSM in the ERROR State.
 	// This command is not allowed from the GUI.
 	// It is instead used inside the FSM callbacks.
@@ -90,8 +90,8 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 
 	addInput(GEMInputs.SETTESTING_TTS);
 	addInput(GEMInputs.SETTTSTEST_MODE);
-		
-		
+
+
 	// make these invisible
 	GEMInputs.SETCONFIGURE.setVisualizable(false);
 	GEMInputs.SETSTART.setVisualizable(false);
@@ -101,19 +101,19 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	GEMInputs.SETINITIAL.setVisualizable(false);
 	GEMInputs.SETRESET.setVisualizable(false);
 	GEMInputs.SETTTSTEST_MODE.setVisualizable(false);
-		
+
 	//
 	// Define command parameters.
 	// These are then visible in the default GUI.
 	//
-		
+
 	// define parameters for tts testing command
 	//
 	CommandParameter<IntegerT> ttsTestFedid          = new CommandParameter<IntegerT>(GEMParameters.TTS_TEST_FED_ID,          new IntegerT(-1));
 	CommandParameter<StringT>  ttsTestMode           = new CommandParameter<StringT>( GEMParameters.TTS_TEST_MODE,            new StringT("") );
 	CommandParameter<StringT>  ttsTestPattern        = new CommandParameter<StringT>( GEMParameters.TTS_TEST_PATTERN,         new StringT("") );
 	CommandParameter<IntegerT> ttsTestSequenceRepeat = new CommandParameter<IntegerT>(GEMParameters.TTS_TEST_SEQUENCE_REPEAT, new IntegerT(-1));
-		
+
 	// define parameter set
 	ParameterSet<CommandParameter> ttsTestParameters = new ParameterSet<CommandParameter>();
 	try {
@@ -125,10 +125,10 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	    // Throws an exception if a parameter is duplicate
 	    throw new StateMachineDefinitionException( "Could not add to ttsTestParameters. Duplicate Parameter?", nothing );
 	}
-		
+
 	// set the test parameters
 	GEMInputs.TEST_TTS.setParameters(ttsTestParameters);
-	
+
 	//
 	// define parameters for Initialize command
 	//
@@ -144,9 +144,9 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	    // Throws an exception if a parameter is duplicate
 	    throw new StateMachineDefinitionException( "Could not add to initializeParameters. Duplicate Parameter?", nothing );
 	}
-		
+
 	GEMInputs.INITIALIZE.setParameters(initializeParameters);
-	
+
 	//
 	// define parameters for Configure command
 	//
@@ -160,9 +160,9 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	    // Throws an exception if a parameter is duplicate
 	    throw new StateMachineDefinitionException( "Could not add to configureParameters. Duplicate Parameter?", nothing );
 	}
-		
+
 	GEMInputs.CONFIGURE.setParameters(configureParameters);
-	
+
 	//
 	// define parameters for Start command
 	//
@@ -176,10 +176,10 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	    // Throws an exception if a parameter is duplicate
 	    throw new StateMachineDefinitionException( "Could not add to startParameters. Duplicate Parameter?", nothing );
 	}
-		
+
 	GEMInputs.START.setParameters(startParameters);
-	
-		
+
+
 	//
 	// Define the State Transitions
 	//
@@ -189,9 +189,9 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	// FSM to the INITIALIZING state.
 	//
 	addTransition(GEMInputs.INITIALIZE, GEMStates.INITIAL, GEMStates.INITIALIZING);
-	
+
 	// TEST_MODE Command:
-	// The TEST_MODE input is allowed in the HALTED state and moves 
+	// The TEST_MODE input is allowed in the HALTED state and moves
 	// the FSM to the PREPARING_TEST_MODE state.
 	//
 	addTransition(GEMInputs.TTSTEST_MODE, GEMStates.HALTED, GEMStates.PREPARING_TTSTEST_MODE);
@@ -228,14 +228,14 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	// the FSM to the RESUMING state.
 	//
 	addTransition(GEMInputs.RESUME, GEMStates.PAUSED, GEMStates.RESUMING);
-		
+
 	// STOP Command:
 	// The STOP input is allowed only in the RUNNING and PAUSED state, and moves
 	// the FSM to the CONFIGURED state.
 	//
 	addTransition(GEMInputs.STOP, GEMStates.RUNNING, GEMStates.STOPPING);
 	addTransition(GEMInputs.STOP, GEMStates.PAUSED,  GEMStates.STOPPING);
-		
+
 	// HALT Command:
 	// The HALT input is allowed in the RUNNING, CONFIGURED and PAUSED
 	// state, and moves the FSM to the HALTING state.
@@ -260,7 +260,7 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	addTransition(GEMInputs.RESET, GEMStates.RUNNING,      GEMStates.RESETTING);
 	addTransition(GEMInputs.RESET, GEMStates.PAUSED,       GEMStates.RESETTING);
 	addTransition(GEMInputs.RESET, GEMStates.TTSTEST_MODE, GEMStates.RESETTING);
-	addTransition(GEMInputs.RESET, GEMStates.ERROR,        GEMStates.RESETTING);		
+	addTransition(GEMInputs.RESET, GEMStates.ERROR,        GEMStates.RESETTING);
 
 	//
 	// The following transitions are not triggered from the GUI.
@@ -291,7 +291,7 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 		      GEMStates.CONFIGURED);
 	addTransition(GEMInputs.SETCONFIGURE, GEMStates.STOPPING,
 		      GEMStates.CONFIGURED);
-		
+
 	// Reach the RUNNING State
 	addTransition(GEMInputs.SETSTART, GEMStates.INITIALIZING,
 		      GEMStates.RUNNING);
