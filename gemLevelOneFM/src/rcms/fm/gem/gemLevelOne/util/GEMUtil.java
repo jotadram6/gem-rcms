@@ -38,7 +38,7 @@ import rcms.fm.fw.parameter.util.ParameterFactory;
 import rcms.fm.fw.parameter.util.ParameterUtil;
 import rcms.fm.fw.service.parameter.ParameterServiceException;
 import rcms.fm.gem.gemLevelOne.GEMFunctionManager;
-import rcms.fm.gem.gemLevelOne.GEMParameters;
+import rcms.fm.gem.gemLevelOne.parameters.GEMParameters;
 import rcms.fm.gem.gemLevelOne.GEMStates;
 import rcms.fm.gem.gemLevelOne.gui.GuiStatePanel;
 import rcms.fm.gem.gemLevelOne.gui.GuiSubdetPanel;

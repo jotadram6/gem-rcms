@@ -83,6 +83,7 @@ import rcms.fm.fw.parameter.ParameterSet;
 import rcms.fm.fw.parameter.type.BooleanT;
 import rcms.fm.fw.parameter.type.DateT;
 import rcms.fm.fw.parameter.type.IntegerT;
+import rcms.fm.fw.parameter.type.LongT;
 import rcms.fm.fw.parameter.type.ParameterType;
 import rcms.fm.fw.parameter.type.StringT;
 import rcms.fm.fw.parameter.type.VectorT;
@@ -142,7 +143,9 @@ import net.hep.cms.xdaqctl.xdata.FlashList;
 import net.hep.cms.xdaqctl.xdata.SimpleItem;
 import net.hep.cms.xdaqctl.xdata.XDataType;
 
+import rcms.fm.gem.gemLevelOne.parameters.GEMParameters;
 import rcms.fm.gem.gemLevelOne.util.GEMUtil;
+
 /**
  *
  * Main Event Handler class for GEM Level 1 Function Manager.
@@ -192,15 +195,17 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 	// Let's register also the StateEnteredEvent triggered when the FSM enters in a new state.
 	subscribeForEvents(StateEnteredEvent.class);
 
-	addAction(GEMStates.INITIALIZING,	    "initAction"                );
-	addAction(GEMStates.CONFIGURING, 	    "configureAction"           );
-	addAction(GEMStates.HALTING,     	    "haltAction"                );
-	addAction(GEMStates.PAUSING,     	    "pauseAction"               );
-	addAction(GEMStates.RECOVERING,  	    "recoverAction"             );
-	addAction(GEMStates.RESETTING,   	    "resetAction"               );
-	addAction(GEMStates.RESUMING,    	    "resumeAction"              );
-	addAction(GEMStates.STARTING,    	    "startAction"               );
-	addAction(GEMStates.STOPPING,    	    "stopAction"                );
+	addAction(GEMStates.INITIALIZING,	    "initAction"         );
+	addAction(GEMStates.HALTING,     	    "haltAction"         );
+	addAction(GEMStates.CONFIGURING, 	    "configureAction"    );
+	// addAction(GEMStates.ENABLING, 	    "enableAction"          );
+	addAction(GEMStates.STARTING,    	    "startAction"        );
+	addAction(GEMStates.RESUMING,    	    "resumeAction"       );
+	addAction(GEMStates.STOPPING,    	    "stopAction"         );
+	addAction(GEMStates.PAUSING,     	    "pauseAction"        );
+	addAction(GEMStates.RECOVERING,  	    "recoverAction"      );
+	addAction(GEMStates.RESETTING,   	    "resetAction"        );
+        addAction(GEMStates.COLDRESETTING,          "coldResettingAction");
 
         addAction(GEMStates.RUNNING,                  "runningAction"                 );  // for testing with external inputs
         addAction(GEMStates.RUNNINGDEGRADED,          "runningDegradedAction"         );  // for testing with external inputs
@@ -214,7 +219,8 @@ public class GEMEventHandler extends UserStateNotificationHandler {
     }
 
 
-    public void init() throws rcms.fm.fw.EventHandlerException {
+    @Override
+        public void init() throws rcms.fm.fw.EventHandlerException {
 	functionManager = (GEMFunctionManager) getUserFunctionManager();
 	qualifiedGroup  = functionManager.getQualifiedGroup();
 	// Unique id for each configuration
@@ -1054,6 +1060,140 @@ public class GEMEventHandler extends UserStateNotificationHandler {
                         ": Failed to send error mesage " + errMessage);
 	}
     }
+
+    public void coldResettingAction(Object obj) throws UserActionException {
+
+        if (obj instanceof StateNotification) {
+
+            // triggered by State Notification from child resource
+
+            /************************************************
+             * PUT YOUR CODE HERE
+             ***********************************************/
+
+            return;
+        }
+
+        else if (obj instanceof StateEnteredEvent) {
+            System.out.println("Executing coldResettingAction");
+            logger.info("Executing coldResettingAction");
+
+            // set action
+            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("coldResetting")));
+
+            /************************************************
+             * PUT YOUR CODE HERE
+             ***********************************************/
+            // perform a cold-reset of your hardware
+
+            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("Cold Reset completed.")));
+            // leave intermediate state
+            functionManager.fireEvent( GEMInputs.SETHALTED );
+
+            logger.debug("coldResettingAction Executed");
+        }
+    }
+
+    public void fixSoftErrorAction(Object obj) throws UserActionException {
+
+        if (obj instanceof StateNotification) {
+
+            // triggered by State Notification from child resource
+
+            /************************************************
+             * PUT YOUR CODE HERE
+             ***********************************************/
+
+            return;
+        }
+
+        else if (obj instanceof StateEnteredEvent) {
+            System.out.println("Executing fixSoftErrorAction");
+            logger.info("Executing fixSoftErrorAction");
+
+            // set action
+            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("fixingSoftError")));
+
+            // get the parameters of the command
+            ParameterSet<CommandParameter> parameterSet = getUserFunctionManager().getLastInput().getParameterSet();
+
+            // check parameter set
+            Long triggerNumberAtPause = null;
+            if (parameterSet.size()==0 || parameterSet.get(GEMParameters.TRIGGER_NUMBER_AT_PAUSE) == null) {
+
+                // go to error, we require parameters
+                String warnMsg = "fixSoftErrorAction: no parameters given with fixSoftError command.";
+
+                // log error
+                logger.warn(warnMsg);
+
+            } else {
+                triggerNumberAtPause = ((LongT)parameterSet.get(GEMParameters.TRIGGER_NUMBER_AT_PAUSE).getValue()).getLong();
+            }
+
+            /************************************************
+             * PUT YOUR CODE HERE TO FIX THE SOFT ERROR
+             ***********************************************/
+
+            functionManager.setSoftErrorDetected(false);
+
+
+            // if the soft error cannot be fixed, the FM should go to ERROR
+
+            if (functionManager.hasSoftError())
+                functionManager.fireEvent(  GEMInputs.SETERROR  );
+            else
+                functionManager.fireEvent(  functionManager.isDegraded() ? GEMInputs.SETRUNNINGDEGRADED : GEMInputs.SETRUNNING  );
+
+            // Clean-up of the Function Manager parameters
+            cleanUpFMParameters();
+
+            logger.debug("resumeAction Executed");
+
+        }
+    }
+
+    //
+    // for testing with external inputs.
+    //
+    // Here we just set our DEGRADED/SOFTERROR state according to an external trigger that sent us to this state.
+    // In a real FM, an external event or periodic check will trigger the FM to change state.
+    //
+    //
+    public void runningDegradedAction(Object obj) throws UserActionException {
+        if (obj instanceof StateEnteredEvent) {
+            functionManager.setDegraded(true);
+        }
+    }
+
+    //
+    // for testing with external inputs
+    //
+    // Here we just set our DEGRADED/SOFTERROR state according to an external trigger that sent us to this state.
+    // In a real FM, an external event or periodic check will trigger the FM to change state.
+    //
+    //
+    public void runningSoftErrorDetectedAction(Object obj) throws UserActionException {
+        if (obj instanceof StateEnteredEvent) {
+            // do not touch degraded
+            functionManager.setSoftErrorDetected(true);
+        }
+    }
+
+    //
+    // for testing with external inputs
+    //
+    // Here we just set our DEGRADED/SOFTERROR state according to an external trigger that sent us to this state.
+    // In a real FM, an external event or periodic check will trigger the FM to change state.
+    //
+    //
+    public void runningAction(Object obj) throws UserActionException {
+        if (obj instanceof StateEnteredEvent) {
+            functionManager.setDegraded(false);
+            functionManager.setSoftErrorDetected(false);
+        }
+    }
+
 
     private void cleanUpFMParameters() {
 	// Clean-up of the Function Manager parameters

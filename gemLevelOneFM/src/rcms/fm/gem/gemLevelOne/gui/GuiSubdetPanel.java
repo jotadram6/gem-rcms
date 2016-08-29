@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 //import com.sun.corba.se.impl.copyobject.JavaStreamObjectCopierImpl;
 
 import rcms.fm.gem.gemLevelOne.GEMFunctionManager;
-import rcms.fm.gem.gemLevelOne.GEMParameters;
+import rcms.fm.gem.gemLevelOne.parameters.GEMParameters;
 
 public class GuiSubdetPanel {
     private static final long serialVersionUID = 1L;

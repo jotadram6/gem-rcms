@@ -10,13 +10,15 @@ import rcms.fm.fw.user.UserStateMachineDefinition;
 import rcms.statemachine.definition.State;
 import rcms.statemachine.definition.StateMachineDefinitionException;
 
+import rcms.fm.gem.gemLevelOne.parameters.GEMParameters;
+
 /**
  * This class defines the Finite State Machine for the GEM level 1 Function Manager.
  *
  * The actual definition of the State Machine must be put in the "init" method.
  *
- * @originalauthor Andrea Petrucci, Alexander Oh, Michele Gulmini
- * @author Jared Sturdy
+ * @author Andrea Petrucci, Alexander Oh, Michele Gulmini
+ * @maintainer Jared Sturdy
  */
 public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 
@@ -29,25 +31,28 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	addState(GEMStates.INITIAL                 );
 	addState(GEMStates.HALTED                  );
 	addState(GEMStates.CONFIGURED              );
-	addState(GEMStates.ENABLED                 );
+	// addState(GEMStates.ENABLED                 );
 	addState(GEMStates.RUNNING                 );
 	addState(GEMStates.RUNNINGDEGRADED         );
-	addState(GEMStates.RUNNINGSOFTERRORDETECTED);
 	addState(GEMStates.PAUSED                  );
 	addState(GEMStates.TTSTEST_MODE            );
 	addState(GEMStates.ERROR                   );
 
+        addState(GEMStates.RUNNINGSOFTERRORDETECTED);
+
 	// transitional states
-	addState(GEMStates.INITIALIZING);
-	addState(GEMStates.ENABLING    );
-	addState(GEMStates.CONFIGURING );
-	addState(GEMStates.HALTING     );
-	addState(GEMStates.PAUSING     );
-	addState(GEMStates.RESUMING    );
-	addState(GEMStates.STARTING    );
-	addState(GEMStates.STOPPING    );
-	addState(GEMStates.RECOVERING  );
-	addState(GEMStates.RESETTING   );
+	addState(GEMStates.INITIALIZING   );
+	addState(GEMStates.HALTING        );
+	addState(GEMStates.CONFIGURING    );
+	// addState(GEMStates.ENABLING       );
+	addState(GEMStates.STARTING       );
+	addState(GEMStates.RESUMING       );
+	addState(GEMStates.STOPPING       );
+	addState(GEMStates.PAUSING        );
+	addState(GEMStates.RECOVERING     );
+	addState(GEMStates.RESETTING      );
+        addState(GEMStates.COLDRESETTING  );
+        addState(GEMStates.FIXINGSOFTERROR);
 
 	addState(GEMStates.PREPARING_TTSTEST_MODE);
 	addState(GEMStates.TESTING_TTS           );
@@ -61,7 +66,7 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	// Defines the Inputs (Commands) for this Finite State Machine.
 	//
 	addInput(GEMInputs.INITIALIZE);
-	addInput(GEMInputs.ENABLE    );
+	// addInput(GEMInputs.ENABLE    );
 	addInput(GEMInputs.CONFIGURE );
 	addInput(GEMInputs.START     );
 	addInput(GEMInputs.STOP      );
@@ -82,8 +87,10 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	GEMInputs.SETERROR.setVisualizable(false);
 
 	// invisible commands needed for fully asynchronous behaviour
-	addInput(GEMInputs.SETENABLED   );
+	addInput(GEMInputs.SETINITIAL   );
+	addInput(GEMInputs.SETHALTED    );
 	addInput(GEMInputs.SETCONFIGURED);
+	// addInput(GEMInputs.SETENABLED   );
 	addInput(GEMInputs.SETRUNNING   );
         addInput(GEMInputs.SETRUNNINGDEGRADED);
         addInput(GEMInputs.SETRUNNINGSOFTERRORDETECTED);
@@ -91,15 +98,16 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	addInput(GEMInputs.SETRESUMED   );
         addInput(GEMInputs.SETRESUMEDDEGRADED);
         addInput(GEMInputs.SETRESUMEDSOFTERRORDETECTED);
-	addInput(GEMInputs.SETHALTED    );
-	addInput(GEMInputs.SETINITIAL   );
-	addInput(GEMInputs.SETRESET     );
+	// addInput(GEMInputs.SETRESET     );
 	addInput(GEMInputs.SETTTSTEST_MODE);
 	// addInput(GEMInputs.SETTESTING_TTS);
 
 
 	// make these invisible
+	GEMInputs.SETINITIAL.setVisualizable(false);
+	GEMInputs.SETHALTED.setVisualizable(false);
 	GEMInputs.SETCONFIGURED.setVisualizable(false);
+	// GEMInputs.SETENABLED.setVisualizable(false);
 	GEMInputs.SETRUNNING.setVisualizable(false);
         GEMInputs.SETRUNNINGDEGRADED.setVisualizable(false);
         GEMInputs.SETRUNNINGSOFTERRORDETECTED.setVisualizable(false);
@@ -107,10 +115,9 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 	GEMInputs.SETRESUMED.setVisualizable(false);
         GEMInputs.SETRESUMEDDEGRADED.setVisualizable(false);
         GEMInputs.SETRESUMEDSOFTERRORDETECTED.setVisualizable(false);
-	GEMInputs.SETHALTED.setVisualizable(false);
-	GEMInputs.SETINITIAL.setVisualizable(false);
-	GEMInputs.SETRESET.setVisualizable(false);
+	// GEMInputs.SETRESET.setVisualizable(false);
 	GEMInputs.SETTTSTEST_MODE.setVisualizable(false);
+	// GEMInputs.SETTESTING_TTS.setVisualizable(false);
 
 	//
 	// Define command parameters.
@@ -119,10 +126,14 @@ public class GEMStateMachineDefinition extends UserStateMachineDefinition {
 
 	// define parameters for tts testing command
 	//
-	CommandParameter<IntegerT> ttsTestFedid          = new CommandParameter<IntegerT>(GEMParameters.TTS_TEST_FED_ID,          new IntegerT(-1));
-	CommandParameter<StringT>  ttsTestMode           = new CommandParameter<StringT>( GEMParameters.TTS_TEST_MODE,            new StringT("") );
-	CommandParameter<StringT>  ttsTestPattern        = new CommandParameter<StringT>( GEMParameters.TTS_TEST_PATTERN,         new StringT("") );
-	CommandParameter<IntegerT> ttsTestSequenceRepeat = new CommandParameter<IntegerT>(GEMParameters.TTS_TEST_SEQUENCE_REPEAT, new IntegerT(-1));
+	CommandParameter<IntegerT> ttsTestFedid          = new CommandParameter<IntegerT>(GEMParameters.TTS_TEST_FED_ID,
+                                                                                          new IntegerT(-1));
+	CommandParameter<StringT>  ttsTestMode           = new CommandParameter<StringT>( GEMParameters.TTS_TEST_MODE,
+                                                                                          new StringT("") );
+	CommandParameter<StringT>  ttsTestPattern        = new CommandParameter<StringT>( GEMParameters.TTS_TEST_PATTERN,
+                                                                                          new StringT("") );
+	CommandParameter<IntegerT> ttsTestSequenceRepeat = new CommandParameter<IntegerT>(GEMParameters.TTS_TEST_SEQUENCE_REPEAT,
+                                                                                          new IntegerT(-1));
 
 	// define parameter set
 	ParameterSet<CommandParameter> ttsTestParameters = new ParameterSet<CommandParameter>();

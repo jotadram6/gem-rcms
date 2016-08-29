@@ -5,12 +5,19 @@ import java.util.List;
 import java.util.ArrayList;
 
 import rcms.fm.gem.gemLevelOne.util.GEMUtil;
+import rcms.fm.gem.gemLevelOne.notificationsToGUI.parameters.ChangedParameterSender;
+import rcms.fm.gem.gemLevelOne.updatesFromGUI.GEMSetParameterHandler;
+import rcms.fm.gem.gemLevelOne.parameters.GEMParameters;
+import rcms.fm.gem.gemLevelOne.parameters.GEMParameterSet;
 import rcms.fm.fw.parameter.CommandParameter;
+import rcms.fm.fw.parameter.FunctionManagerParameter;
+import rcms.fm.fw.parameter.ParameterException;
 import rcms.fm.fw.parameter.ParameterSet;
 import rcms.fm.fw.parameter.type.IntegerT;
 import rcms.fm.fw.parameter.type.StringT;
 import rcms.fm.fw.user.UserActionException;
 import rcms.fm.fw.user.UserFunctionManager;
+import rcms.fm.fw.EventHandlerException;
 import rcms.fm.resource.QualifiedGroup;
 import rcms.fm.resource.QualifiedResource;
 import rcms.fm.resource.QualifiedResourceContainer;
@@ -77,6 +84,33 @@ public class GEMFunctionManager extends UserFunctionManager {
      */
     public State calcState = null;
 
+    /**
+     * <code>svCalc</code>: State vector calculator
+     */
+    public StateVectorCalculation svCalc = null;
+    
+    /**
+     * <code>gemParameterSet</code>: 
+     */
+    private GEMParameterSet gemParameterSet;
+
+    // In the template FM we store whether we are degraded in a boolean
+    boolean degraded = false;
+    
+    // In the template FM we store whether we have detected a softError in a boolean
+    boolean softErrorDetected = false;
+
+    private boolean _isDestroyed = false;
+
+    /**
+     * This class instance runs periodically and sends updated FM parameters to
+     * the GUI. To indicate that a parameter update is required, the method
+     * requireParameterUpdate() needs to be called every time a GUI-relevant
+     * parameter has changed.
+     */
+    private ChangedParameterSender changedParameterSender;
+
+
     // string containing details on the setup from where this FM was started
     public String RunSetupDetails  = "empty";
     public String FMfullpath       = "empty";
@@ -117,10 +151,25 @@ public class GEMFunctionManager extends UserFunctionManager {
 	// Any State Machine Implementation must provide the framework
 	// with some information about itself.
 
+        this.gemParameterSet = GEMParameterSet.getInstance();
 	// make the parameters available
 	addParameters();
 
     }
+
+    public boolean isDestroyed() {
+        return this._isDestroyed;
+    }
+    
+    public ChangedParameterSender getChangedParameterSender() {
+        return this.changedParameterSender;
+    }
+    
+    @Override
+	public GEMParameterSet getParameterSet() {
+        return this.gemParameterSet;
+    }
+
 
     /*
      * (non-Javadoc)
@@ -128,26 +177,29 @@ public class GEMFunctionManager extends UserFunctionManager {
      * @see rcms.statemachine.user.UserStateMachine#createAction()
      * This method is called by the framework when the Function Manager is created.
      */
-    public void createAction(ParameterSet<CommandParameter> pars) throws UserActionException {
+    @SuppressWarnings("rawtypes")
+	@Override
+        public void createAction(ParameterSet<CommandParameter> pars) throws UserActionException {
 	String message = "[GEMFunctionManager createAction] gemLevelOneFM createAction called.";
 	System.out.println(message);
 	logger.debug(      message);
-
+        
 	GEMUtil.killOrphanedExecutives();
-
+        
 	message = "[GEMFunctionManager createAction] gemLevelOneFM createAction executed.";
 	System.out.println(message);
 	logger.debug(      message);
     }
-
+    
     /*
      * (non-Javadoc)
      * @see rcms.statemachine.user.UserStateMachine#destroyAction()
      * This method is called by the framework when the Function Manager is destroyed.
      */
-    public void destroyAction() throws UserActionException {
+    @Override
+        public void destroyAction() throws UserActionException {
 	String message = "[GEMFunctionManager destroyAction] gemLevelOneFM destroyAction called.";
-
+        
 	System.out.println(message);
 	logger.debug(      message);
 
@@ -196,9 +248,9 @@ public class GEMFunctionManager extends UserFunctionManager {
 	parameterSet = GEMParameters.LVL_ONE_PARAMETER_SET;
     }
 
-    public void init() throws StateMachineDefinitionException,
-			      rcms.fm.fw.EventHandlerException {
-
+    @Override
+        public void init() throws StateMachineDefinitionException, EventHandlerException {
+        
 	// instantiate utility
 	GEMUtil = new GEMUtil(this);
 
@@ -225,8 +277,18 @@ public class GEMFunctionManager extends UserFunctionManager {
      * Returns true if custom GUI is required, false otherwise
      * @return true, because GEMFunctionManager class requires user code
      */
-    public boolean hasCustomGUI() {
+    @Override
+        public boolean hasCustomGUI() {
 	return true;
+    }
+
+    public void resetAllParameters() {
+        try {
+            this.getParameterSet().initializeParameters();
+        } catch (ParameterException ex) {
+            logger.error("[GEMFunctionManager resetAllParameters] Error reinitializig parameters.", ex);
+        }
+        this.changedParameterSender.requireParameterUpdate();
     }
 
     // get a session Id
@@ -255,4 +317,23 @@ public class GEMFunctionManager extends UserFunctionManager {
         getParameterSet().get(GEMParameters.SID).setValue(new IntegerT(sessionId));
     }
 
+    public boolean isDegraded() {
+        // FM may check whether it is currently degraded if such functionality exists
+        return degraded;
+    }
+
+    public boolean hasSoftError() {
+        // FM may check whether the system has a soft error if such functionality exists
+        return softErrorDetected;
+    }
+
+    // only needed if FM cannot check for degradation
+    public void setDegraded(boolean degraded) {
+        this.degraded = degraded;
+    }
+
+    // only needed if FM cannot check for softError
+    public void setSoftErrorDetected(boolean softErrorDetected) {
+        this.softErrorDetected = softErrorDetected;
+    }
 }
