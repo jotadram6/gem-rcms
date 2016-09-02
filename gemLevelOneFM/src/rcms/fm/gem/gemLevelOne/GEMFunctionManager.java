@@ -88,15 +88,15 @@ public class GEMFunctionManager extends UserFunctionManager {
      * <code>svCalc</code>: State vector calculator
      */
     public StateVectorCalculation svCalc = null;
-    
+
     /**
-     * <code>gemParameterSet</code>: 
+     * <code>gemParameterSet</code>:
      */
     private GEMParameterSet gemParameterSet;
 
     // In the template FM we store whether we are degraded in a boolean
     boolean degraded = false;
-    
+
     // In the template FM we store whether we have detected a softError in a boolean
     boolean softErrorDetected = false;
 
@@ -151,20 +151,22 @@ public class GEMFunctionManager extends UserFunctionManager {
 	// Any State Machine Implementation must provide the framework
 	// with some information about itself.
 
+        logger.info("[GEMFunctionManager ctor] gemParameterSet:" + this.gemParameterSet);
         this.gemParameterSet = GEMParameterSet.getInstance();
+        logger.info("[GEMFunctionManager ctor] gemParameterSet:" + this.gemParameterSet);
 	// make the parameters available
 	addParameters();
-
+        logger.info("[GEMFunctionManager ctor] gemParameterSet:" + this.gemParameterSet);
     }
 
     public boolean isDestroyed() {
         return this._isDestroyed;
     }
-    
+
     public ChangedParameterSender getChangedParameterSender() {
         return this.changedParameterSender;
     }
-    
+
     @Override
 	public GEMParameterSet getParameterSet() {
         return this.gemParameterSet;
@@ -183,14 +185,14 @@ public class GEMFunctionManager extends UserFunctionManager {
 	String message = "[GEMFunctionManager createAction] gemLevelOneFM createAction called.";
 	System.out.println(message);
 	logger.debug(      message);
-        
+
 	GEMUtil.killOrphanedExecutives();
-        
+
 	message = "[GEMFunctionManager createAction] gemLevelOneFM createAction executed.";
 	System.out.println(message);
 	logger.debug(      message);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see rcms.statemachine.user.UserStateMachine#destroyAction()
@@ -199,7 +201,7 @@ public class GEMFunctionManager extends UserFunctionManager {
     @Override
         public void destroyAction() throws UserActionException {
 	String message = "[GEMFunctionManager destroyAction] gemLevelOneFM destroyAction called.";
-        
+
 	System.out.println(message);
 	logger.debug(      message);
 
@@ -245,32 +247,41 @@ public class GEMFunctionManager extends UserFunctionManager {
      * add parameters to parameterSet. After this they are accessible.
      */
     private void addParameters() {
-	parameterSet = GEMParameters.LVL_ONE_PARAMETER_SET;
+	// parameterSet = GEMParameters.LVL_ONE_PARAMETER_SET;
+	parameterSet = this.getParameterSet();
     }
 
     @Override
         public void init() throws StateMachineDefinitionException, EventHandlerException {
-        
+        logger.info("[GEMFunctionManager init] starting init()");
+
 	// instantiate utility
 	GEMUtil = new GEMUtil(this);
+        logger.info("[GEMFunctionManager init] created GEMUtil");
 
 	// Set first of all the State Machine Definition
 	setStateMachineDefinition(new GEMStateMachineDefinition());
+        logger.info("[GEMFunctionManager init] created GEMUtil");
 
 	// Add event handler
 	addEventHandler(new GEMEventHandler());
+        logger.info("[GEMFunctionManager init] added event handler GEMEventHandler");
 
 	// add SetParameterHandler
 	addEventHandler(new GEMSetParameterHandler());
+        logger.info("[GEMFunctionManager init] added event handler GEMSetParameterHandler");
 
 	// Add error handler
 	addEventHandler(new GEMErrorHandler());
+        logger.info("[GEMFunctionManager init] added event handler GEMErrorHandler");
 
 	// get session ID
 	// getSessionId();
 
 	// call renderers
+        logger.info("[GEMFunctionManager init] rendering GUI");
 	GEMUtil.renderMainGui();
+        logger.info("[GEMFunctionManager init] done");
     }
 
     /**

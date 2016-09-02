@@ -30,6 +30,7 @@ import rcms.util.logger.RCMSLogger;
  * For more details => https://twiki.cern.ch/twiki/bin/view/CMS/StdFMParameters
  *
  * @author Andrea Petrucci, Alexander Oh, Michele Gulmini
+ * @maintainer Jared Sturdy
  *
  */
 public class GEMSetParameterHandler extends UserEventHandler {

@@ -73,7 +73,9 @@ public class GEMUtil {
     public GEMUtil(GEMFunctionManager functionManager) {
 	super();
 	this.functionManager = functionManager;
-
+        String message = "[GEMUtil constructor] functionManager is " + this.functionManager;
+        logger.debug(message);
+        
 	// start publisher thread
 	//_publisher = new PublishConsumer(publisherQueue);
 	//_pubThread  = new Thread(_publisher);
@@ -331,18 +333,24 @@ public class GEMUtil {
 
     public void renderMainGui() {
 
+        logger.info("[GEMUtil renderMainGui] getting state panel");
 	GuiStatePanel guiState = new GuiStatePanel(functionManager);
+        logger.info("[GEMUtil renderMainGui] getParameterSet():" + functionManager.getParameterSet());
+        logger.info("[GEMUtil renderMainGui] getParameterSet().get(GEMParameters.GUI_STATE_PANEL_HTML):"
+                    + functionManager.getParameterSet().get(GEMParameters.GUI_STATE_PANEL_HTML));
 	functionManager
 	    .getParameterSet()
 	    .get(GEMParameters.GUI_STATE_PANEL_HTML)
 	    .setValue(new StringT( guiState.generateHtml() ));
 
+        logger.info("[GEMUtil renderMainGui] getting subdet panel");
 	GuiSubdetPanel guiSubdet = new GuiSubdetPanel(functionManager);
 	functionManager
 	    .getParameterSet()
 	    .get(GEMParameters.GUI_SUBDET_PANEL_HTML)
 	    .setValue(new StringT( guiSubdet.generateHtml() ));
 
+        logger.info("[GEMUtil renderMainGui] done");
     }
 
 }

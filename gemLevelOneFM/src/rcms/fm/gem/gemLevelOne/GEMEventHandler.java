@@ -1035,7 +1035,8 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 	    functionManager.fireEvent( GEMInputs.SETTTSTEST_MODE );
 
 	    // set action
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("")));
+	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,
+                                                                                        new StringT("")));
 
 	    logger.debug("[GEMEventHandler testingTTSAction] testingTTSAction Executed");
 	}
@@ -1079,14 +1080,16 @@ public class GEMEventHandler extends UserStateNotificationHandler {
             logger.info("Executing coldResettingAction");
 
             // set action
-            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("coldResetting")));
+            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,
+                                                                                        new StringT("coldResetting")));
 
             /************************************************
              * PUT YOUR CODE HERE
              ***********************************************/
             // perform a cold-reset of your hardware
 
-            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("Cold Reset completed.")));
+            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,
+                                                                                        new StringT("Cold Reset completed.")));
             // leave intermediate state
             functionManager.fireEvent( GEMInputs.SETHALTED );
 
@@ -1112,7 +1115,8 @@ public class GEMEventHandler extends UserStateNotificationHandler {
             logger.info("Executing fixSoftErrorAction");
 
             // set action
-            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("fixingSoftError")));
+            functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,
+                                                                                        new StringT("fixingSoftError")));
 
             // get the parameters of the command
             ParameterSet<CommandParameter> parameterSet = getUserFunctionManager().getLastInput().getParameterSet();
@@ -1197,14 +1201,22 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 
     private void cleanUpFMParameters() {
 	// Clean-up of the Function Manager parameters
-	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,       new StringT("")));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ERROR_MSG,        new StringT("")));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.RUN_NUMBER,      new IntegerT(-1)));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.RUN_TYPE,         new StringT("")));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.TTS_TEST_FED_ID, new IntegerT(-1)));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.TTS_TEST_MODE,    new StringT("")));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.TTS_TEST_PATTERN, new StringT("")));
-	functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.TTS_TEST_SEQUENCE_REPEAT,new IntegerT(-1)));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT >(GEMParameters.ACTION_MSG,
+                                                                                     new StringT("")));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT >(GEMParameters.ERROR_MSG,
+                                                                                     new StringT("")));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.RUN_NUMBER,
+                                                                                     new IntegerT(-1)));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT >(GEMParameters.RUN_TYPE,
+                                                                                     new StringT("")));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.TTS_TEST_FED_ID,
+                                                                                     new IntegerT(-1)));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT >(GEMParameters.TTS_TEST_MODE,
+                                                                                     new StringT("")));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<StringT >(GEMParameters.TTS_TEST_PATTERN,
+                                                                                     new StringT("")));
+	functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.TTS_TEST_SEQUENCE_REPEAT,
+                                                                                     new IntegerT(-1)));
     }
 
     public void publishRunInfo(boolean doRun)
