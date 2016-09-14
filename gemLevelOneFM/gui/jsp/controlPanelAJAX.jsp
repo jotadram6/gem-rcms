@@ -96,7 +96,7 @@
 	    <input type="hidden" id="NO_RESPONSE"           name="NO_RESPONSE"           value="" />
 
             <!-- copied from original controlPanel.jsp -->
-            <TABLE class="HeaderTable" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
+            <table class="HeaderTable" border="4" cellpadding="2" cellspacing="2" WIDTH="100%">
 	        <tr>
 	            <td><a class="MenuLinkEnabled" href="./DiagnosticServlet"><B>Diagnostic Page</B></a></td>
                     <td><a class="MenuLinkEnabled" href="../../../Collector/Collector"><B>Logging Collector</B></a></td>
@@ -106,52 +106,56 @@
                     <td><a class="MenuLinkEnabled" href="./LogoutServlet"><B>Logout</B></a></td>
 	        </tr>
                 
-            </TABLE>
+            </table>
             
-            <TABLE align="center" class="HeaderTable" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="50%">
+            <table align="center" class="HeaderTable" border="4" cellpadding="2" cellspacing="2" WIDTH="50%">
                 <tr>
 	            <!--  REFRESH BUTTON --> 
-	            <TD align="center" bgcolor="#ADFF2F">
+	            <td align="center" bgcolor="#ADFF2F">
 	                <rcms.control:refreshButtonRenderer
 cssClass="button1" onClickFunction="onUpdatedRefreshButton()"
 name="Refresh" indentation="10" />
-	            </TD>
+	            </td>
 	            
-	            <TD align="center" bgcolor="#4682B4">
+	            <td align="center" bgcolor="#4682B4">
 	                <rcms.control:createButtonRenderer cssClass="button1"
 	onClickFunction="onCreateButton()" name="Create" indentation="10" /> 
 	                    <rcms.control:attachButtonRenderer cssClass="button1" 
 	onClickFunction="onAttachButton()" name="Attach"indentation="10" /> 
 	                    <rcms.control:detachButtonRenderer cssClass="button1" 
 	onClickFunction="onDetachButton()" name="Detach" indentation="10" /> 
-	                </TD>	
-	                <TD align="center" bgcolor="#FF8C00">
+	                </td>	
+	                <td align="center" bgcolor="#FF8C00">
 	                    <rcms.control:destroyButtonRenderer cssClass="button1" 
 	onClickFunction="onMyDestroyButton()" name="Destroy" indentation="10" />
-	                </TD>
+	                </td>
                     </tr>
-                </TABLE>
+                </table>
                 <br>
                 <table style="width: 100%;">
                     <tr>
                         
                         </td>
-	                <td class="TitleMargin"><rcms.control:customResourceRenderer indentation="1" type="img" 
-	path="/img/cms.gif" align="middle" width="120"  height="120"  border="0" htmlId="cms_left"/></td>
+	                <td class="TitleMargin"><rcms.control:customResourceRenderer indentation="1" type="img"
+                                                                                     path="/img/cms.gif" align="middle"
+                                                                                     width="120"  height="120"
+                                                                                     border="0" htmlId="cms_left"/></td>
                         <td>
                             
-                            <TABLE class="paraTableName" BORDERCOLOR="black" BORDER="4" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
+                            <table class="paraTableName" bordercolor="black" border="4" cellpadding="2" cellspacing="2" WIDTH="100%">
                                 <tr>
-                                    <TD align="center" bgcolor="#F5F5DC" class="paraTableName" >
-                                        <rcms.control:stateRenderer titleClass="control_label1" label="<B>State<B>:&nbsp;" contentClass="control_labe13" indentation="10"/></TD>
+                                    <td align="center" bgcolor="#F5F5DC" class="paraTableName" >
+                                        <rcms.control:stateRenderer titleClass="control_label1" label="<B>State<B>:&nbsp;"
+                                                                    contentClass="control_labe13" indentation="10"/></td>
                                         
-                                        <TD  align="center" bgcolor="#000000">
-                                            <button id="showStatusTableButton" class="MenuButton" value="StatusTable" name="StatusTable"
-onClick="onShowStatusTableButton()">StatusTable </button></TD>
+                                        <td  align="center" bgcolor="#000000">
+                                            <button id="showStatusTableButton" class="MenuButton" value="StatusTable"
+                                                    name="StatusTable"
+                                                    onClick="onShowStatusTableButton()">StatusTable</button></td>
                                 </tr>
-                            </TABLE>
+                            </table>
                             
-	                    <TABLE style="width: 1080px;">
+	                    <table style="width: 1080px;">
 	                        <tr>
 		                    <td  bgcolor="#B0C4DE" align="center">
 		                        <div id="commandSection">
@@ -159,12 +163,13 @@ onClick="onShowStatusTableButton()">StatusTable </button></TD>
 		                        </div>
 		                        <br>
 		                        <div id="commandParameterCheckBoxSection" class="control_label1">
-			                    <rcms.control:commandParameterCheckboxRenderer title="&nbsp;Show Command Parameter Section" indentation="11"/>
+			                    <rcms.control:commandParameterCheckboxRenderer title="&nbsp;Show Command Parameter Section"
+                                                                                           indentation="11"/>
 		                        </div>
 	                            </td>
 	                        </tr>
 	                        
-                            </TABLE>
+                            </table>
                         </td>
 	                <td class="TitleMargin"><rcms.control:customResourceRenderer indentation="1" type="img" 
 	path="/img/YE1.gif" align="middle" width="140"  height="130"  border="0" htmlId="YE1_left"/></td>
@@ -174,12 +179,12 @@ onClick="onShowStatusTableButton()">StatusTable </button></TD>
                 <table style="width: 100%;" align="center">
                     <tr>
 	                
-	                <!--  INFO TABLE -->
+	                <!--  INFO table -->
 	                <td bgcolor="#DCDCDC" align="center">
 	                    <table style="color: #FFFFFF; width: 700px; background-color: #87CEFA;">
                                 
 	                        <tr>
-		                    <TD colspan="2" class="paraTableName">
+		                    <td colspan="2" class="paraTableName">
 			                <rcms.control:configurationPathRenderer
 titleClass="control_label1" label="Configuration : &nbsp;"
 contentClass="control_label2" indentation="10" />
@@ -187,7 +192,7 @@ contentClass="control_label2" indentation="10" />
 			                <rcms.control:configurationKeyRenderer titleClass="control_label1"
 hidden="true" label="<B>Configuration Keys<B>:&nbsp;"
 contentClass="control_label2" indentation="10" />
-		                    </TD>
+		                    </td>
 		                </tr>
 		                
 		                <tr>
