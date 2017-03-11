@@ -271,85 +271,83 @@ public class GEMEventHandler extends UserStateNotificationHandler {
     
     public void initAction(Object obj) throws UserActionException {
 
-	if (obj instanceof StateNotification) {
+    	if (obj instanceof StateNotification) {
+    		
+    		// triggered by State Notification from child resource
 
-	    // triggered by State Notification from child resource
+    		/************************************************
+    		 * PUT YOUR CODE HERE
+    		 ***********************************************/
 
-	    /************************************************
-	     * PUT YOUR CODE HERE
-	     ***********************************************/
+    		return;	
+    	}
 
-	    return;
-	}
+    	else if (obj instanceof StateEnteredEvent) {
 
-	else if (obj instanceof StateEnteredEvent) {
+    		// triggered by entered state action
+    		// let's command the child resources
+    		//GEMUtil.setParameter(action ,"Initializing" );
 
-	    // triggered by entered state action
-	    // let's command the child resources
-	    //GEMUtil.setParameter(action ,"Initializing" );
+    		// debug
+    		logger.debug("[GEMEventHandler initAction] initAction called.");
 
-	    // debug
-	    logger.debug("[GEMEventHandler initAction] initAction called.");
-
-	    // set action
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,
+    		// set action
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,
                                                                                         new StringT("Initializing")));
 
-	    // update state
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.STATE,
+    		// update state
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.STATE,
                                                                                         new StringT(functionManager.getState().getStateString())));
 
-	    // initialize qualified group
-	    try {
-		qualifiedGroup.init();
-	    } catch (Exception e) {
-		// failed to init
-		String errMsg = this.getClass().toString() + " failed to initialize resources";
+    		// initialize qualified group
+    		try {
+    			qualifiedGroup.init();
+    		} catch (Exception e) {
+    			// failed to init
+    			String errMsg = this.getClass().toString() + " failed to initialize resources";
 
-		// send error notification
-		sendCMSError(errMsg);
+    			// send error notification
+    			sendCMSError(errMsg);
 
-		//log error
-		logger.error("[GEMEventHandler initAction] "+errMsg,e);
+    			//log error
+    			logger.error("[GEMEventHandler initAction] "+errMsg,e);
 
-		// go to error state
-		functionManager.fireEvent(GEMInputs.SETERROR);
-	    }
+    			// go to error state
+    			functionManager.fireEvent(GEMInputs.SETERROR);
+    		}
 
-	    // find xdaq applications
-	    List<QualifiedResource> xdaqList = qualifiedGroup.seekQualifiedResourcesOfType(new XdaqApplication());
-	    functionManager.containerXdaqApplication = new XdaqApplicationContainer(xdaqList);
-	    logger.debug("[GEMEventHandler initAction] Application list : " + xdaqList.size() );
+    		// find xdaq applications
+    		List<QualifiedResource> xdaqList = qualifiedGroup.seekQualifiedResourcesOfType(new XdaqApplication());
+    		functionManager.containerXdaqApplication = new XdaqApplicationContainer(xdaqList);
+    		logger.debug("[GEMEventHandler initAction] Application list : " + xdaqList.size() );
 
-	    // set paraterts from properties
-	    GEMUtil.setParameterFromProperties();
+    		// set paraterts from properties
+    		GEMUtil.setParameterFromProperties();
 
-	    // render gui
-	    GEMUtil.renderMainGui();
+    		// render gui
+    		GEMUtil.renderMainGui();
 
-	    functionManager.containerGEMSupervisor =
-		new XdaqApplicationContainer(functionManager.containerXdaqApplication.getApplicationsOfClass("gem::supervisor::GEMSupervisor"));
+    		functionManager.containerGEMSupervisor =
+    				new XdaqApplicationContainer(functionManager.containerXdaqApplication.getApplicationsOfClass("gem::supervisor::GEMSupervisor"));
 
-	    // go to HALT
-	    functionManager.fireEvent( GEMInputs.SETHALTED );
+    		// go to HALT
+    		functionManager.fireEvent( GEMInputs.SETHALTED );
 
+    		// set action
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("")));
 
-	    // set action
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("")));
-
-
-	    // parameters for cross checks (RCMS task #12155)
-	    ParameterSet  parameters = getUserFunctionManager().getLastInput().getParameterSet();
-	    IntegerT             sid = (IntegerT)parameters.get(GEMParameters.SID).getValue();
-	    StringT  global_conf_key = (StringT)parameters.get(GEMParameters.GLOBAL_CONF_KEY).getValue();
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.SID, sid));
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.INITIALIZED_WITH_SID,
+    		// parameters for cross checks (RCMS task #12155)
+    		ParameterSet  parameters = getUserFunctionManager().getLastInput().getParameterSet();
+    		IntegerT             sid = (IntegerT)parameters.get(GEMParameters.SID).getValue();
+    		StringT  global_conf_key = (StringT)parameters.get(GEMParameters.GLOBAL_CONF_KEY).getValue();
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.SID, sid));
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.INITIALIZED_WITH_SID,
                                                                                          sid));
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.INITIALIZED_WITH_GLOBAL_CONF_KEY,
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.INITIALIZED_WITH_GLOBAL_CONF_KEY,
                                                                                         global_conf_key ));
 
-	    logger.info("[GEMEventHandler initAction] initAction Executed");
-	}
+    		logger.info("[GEMEventHandler initAction] initAction Executed");
+    	}
     }
 
 
@@ -447,114 +445,152 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 
     public void configureAction(Object obj) throws UserActionException {
 
-	if (obj instanceof StateNotification) {
+    	if (obj instanceof StateNotification) {
 
-	    // triggered by State Notification from child resource
+    		// triggered by State Notification from child resource
 
-	    // leave intermediate state
-	    // check that the gem supervisor is in configured state
-	    for ( XdaqApplication xdaqApp : functionManager.containerGEMSupervisor.getApplications()) {
-		if (xdaqApp.getCacheState().equals(GEMStates.ERROR)) {
-		    functionManager.fireEvent(GEMInputs.SETERROR);
-		}
-		else if (!xdaqApp.getCacheState().equals(GEMStates.CONFIGURED)) return;
-	    }
-	    functionManager.fireEvent( GEMInputs.SETCONFIGURED );
+    		// leave intermediate state
+    		// check that the gem supervisor is in configured state
+    		for ( XdaqApplication xdaqApp : functionManager.containerGEMSupervisor.getApplications()) {
+    			if (xdaqApp.getCacheState().equals(GEMStates.ERROR)) {
+    				functionManager.fireEvent(GEMInputs.SETERROR);
+    			}
+    			else if (!xdaqApp.getCacheState().equals(GEMStates.CONFIGURED)) return;
+    		}
+    		functionManager.fireEvent( GEMInputs.SETCONFIGURED );
 
-	    return;
-	}
+    		return;
+    	}
 
-	else if (obj instanceof StateEnteredEvent) {
-	    System.out.println("Executing configureAction");
-	    logger.info("[GEMEventHandler configureAction] Executing configureAction");
-
-
-	    // check that we have a gem supervisor to control
-	    if (functionManager.containerGEMSupervisor.getApplications().size() == 0) {
-		// nothing to control, go to configured immediately
-		functionManager.fireEvent( GEMInputs.SETCONFIGURED );
-		return;
-	    }
-
-	    // set action
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("configuring")));
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.STATE, new StringT("Configured")));
-
-	    //get the parameters of the command
-	    ParameterSet<CommandParameter> parameterSet = getUserFunctionManager().getLastInput().getParameterSet();
-
-	    // check parameter set
-	    if (parameterSet.size()==0 || parameterSet.get(GEMParameters.RUN_TYPE) == null ||
-		((StringT)parameterSet.get(GEMParameters.RUN_TYPE).getValue()).equals("") )  {
-
-		// Set default
-		try {
-		    parameterSet.add( new CommandParameter<StringT>(GEMParameters.RUN_TYPE, new StringT("Default")));
-		} catch (ParameterException e) {
-		    logger.error("[GEMEventHandler configureAction] Could not default the run type to Default",e);
-		    functionManager.fireEvent(GEMInputs.SETERROR);
-		}
-	    }
-
-	    // get the run number from the configure command
-	    // get the calib key and put it as run type (another ichiro special)
-	    String runType = ((StringT)functionManager.getParameterSet().get(GEMParameters.GEM_CALIB_KEY).getValue()).getString();
-
-	    // Set the runType in the Function Manager parameters
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.RUN_TYPE,new StringT(runType)));
+    	else if (obj instanceof StateEnteredEvent) {
+    		System.out.println("Executing configureAction");
+    		logger.info("[GEMEventHandler configureAction] Executing configureAction");
 
 
-	    // set run type parameter
-	    try {
-		XDAQParameter xdaqParam = ((XdaqApplication)
+    		// check that we have a gem supervisor to control
+    		if (functionManager.containerGEMSupervisor.getApplications().size() == 0) {
+    			// nothing to control, go to configured immediately
+    			functionManager.fireEvent( GEMInputs.SETCONFIGURED );
+    			return;
+    		}
+
+    		// set action
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("configuring")));
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.STATE, new StringT("Configured")));
+
+    		//get the parameters of the command
+    		ParameterSet<CommandParameter> parameterSet = getUserFunctionManager().getLastInput().getParameterSet();
+
+    		// check parameter set
+    		if (parameterSet.size()==0 || parameterSet.get(GEMParameters.RUN_TYPE) == null ||
+    		((StringT)parameterSet.get(GEMParameters.RUN_TYPE).getValue()).equals("") )  {
+    			// Set default
+    			try {
+    				parameterSet.add( new CommandParameter<StringT>(GEMParameters.RUN_TYPE, new StringT("Default")));
+    			} catch (ParameterException e) {
+    				logger.error("[GEMEventHandler configureAction] Could not default the run type to Default",e);
+    				functionManager.fireEvent(GEMInputs.SETERROR);
+    			}
+    		}
+
+    		// get the run number from the configure command
+    		// get the calib key and put it as run type (another ichiro special)
+    		String runType = ((StringT)functionManager.getParameterSet().get(GEMParameters.GEM_CALIB_KEY).getValue()).getString();
+
+    		// Set the runType in the Function Manager parameters
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.RUN_TYPE,new StringT(runType)));
+
+
+    		// set run type parameter
+    		try {
+    			XDAQParameter xdaqParam = ((XdaqApplication)
 					   functionManager.containerGEMSupervisor.getApplications().get(0))
-		    .getXDAQParameter();
+					   .getXDAQParameter();
 
-		// select RunType of gem supervisor.
-		// this parameter is used to differentiate between
-		// 1) calibration run
-		// 2) global run
-		// since level one is only used in global runs we hardwire
-		// for the time being to global run = "Default".
-		// the parameter is set to the supervisor xdaq application.
-		xdaqParam.select("RunType");
-		xdaqParam.setValue("RunType", runType);
-		xdaqParam.send();
+    			// select RunType of gem supervisor.
+    			// this parameter is used to differentiate between
+    			// 1) calibration run
+    			// 2) global run
+    			// since level one is only used in global runs we hardwire
+    			// for the time being to global run = "Default".
+    			// the parameter is set to the supervisor xdaq application.
+    			xdaqParam.select("RunType");
+    			xdaqParam.setValue("RunType", runType);
+    			xdaqParam.send();
 
-
-	    } catch (Exception e) {
-		logger.error("[GEMEventHandler configureAction] "+getClass().toString() +
+    		} catch (Exception e) {
+    			logger.error("[GEMEventHandler configureAction] "+getClass().toString() +
 			     "Failed to set run type Default to gem supervisor xdaq application."+
                              " (Value is hardwired in the code) ", e);
 
-		functionManager.fireEvent(GEMInputs.SETERROR);
-	    }
+    			functionManager.fireEvent(GEMInputs.SETERROR);
+    		}
 
-	    // send Configure
-	    try {
-		functionManager.containerGEMSupervisor.execute(GEMInputs.CONFIGURE);
+    		// send Configure
+    		try {
+    			functionManager.containerGEMSupervisor.execute(GEMInputs.CONFIGURE);
 
-	    } catch (Exception e) {
-		logger.error("[GEMEventHandler configureAction] "+getClass().toString() +
+    		} catch (Exception e) {
+    			logger.error("[GEMEventHandler configureAction] "+getClass().toString() +
 			     "Failed to Configure gem supervisor xdaq application.", e);
 
-		functionManager.fireEvent(GEMInputs.SETERROR);
-	    }
+    			functionManager.fireEvent(GEMInputs.SETERROR);
+    		}
 
-	    // set action
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("")));
+    		// set action
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT>(GEMParameters.ACTION_MSG,new StringT("")));
 
-	    // parameters for cross checks (RCMS task #12155)
-	    ParameterSet parameters = getUserFunctionManager().getLastInput().getParameterSet();
-	    IntegerT run_number      = (IntegerT)parameters.get(GEMParameters.RUN_NUMBER     ).getValue();
-	    StringT  run_key         = (StringT) parameters.get(GEMParameters.RUN_KEY        ).getValue();
-	    StringT  tpg_key         = (StringT) parameters.get(GEMParameters.TPG_KEY        ).getValue();
-	    StringT  fed_enable_mask = (StringT) parameters.get(GEMParameters.FED_ENABLE_MASK).getValue();
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.CONFIGURED_WITH_RUN_NUMBER     , run_number));
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT> (GEMParameters.CONFIGURED_WITH_RUN_KEY        , run_key));
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT> (GEMParameters.CONFIGURED_WITH_TPG_KEY        , tpg_key));
-	    functionManager.getParameterSet().put(new FunctionManagerParameter<StringT> (GEMParameters.CONFIGURED_WITH_FED_ENABLE_MASK, fed_enable_mask));
+    		// parameters for cross checks (RCMS task #12155)
+    		ParameterSet parameters = getUserFunctionManager().getLastInput().getParameterSet();
+    		IntegerT run_number      = (IntegerT)parameters.get(GEMParameters.RUN_NUMBER     ).getValue();
+    		StringT  run_key         = (StringT) parameters.get(GEMParameters.RUN_KEY        ).getValue();
+    		StringT  tpg_key         = (StringT) parameters.get(GEMParameters.TPG_KEY        ).getValue();
+    		StringT  fed_enable_mask = (StringT) parameters.get(GEMParameters.FED_ENABLE_MASK).getValue();
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<IntegerT>(GEMParameters.CONFIGURED_WITH_RUN_NUMBER     , run_number));
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT> (GEMParameters.CONFIGURED_WITH_RUN_KEY        , run_key));
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT> (GEMParameters.CONFIGURED_WITH_TPG_KEY        , tpg_key));
+    		functionManager.getParameterSet().put(new FunctionManagerParameter<StringT> (GEMParameters.CONFIGURED_WITH_FED_ENABLE_MASK, fed_enable_mask));
 
+			// Configure TCDS ICIs/PIs 
+			ListIterator<QualifiedResource> itr = functionManager.getXdaqTCDSAppIterator();
+			while(itr.hasNext()){
+				XdaqApplication xdaqApp = (XdaqApplication) itr.next();
+			
+				String appName = xdaqApp.getName(); //returns <classname>_<instance>
+				String confPar = appName + "_" + "conf";
+				String hwConf = functionManager.getConfProperty(confPar);
+				logger.debug(hwConf);
+				
+				//Define the FSM input to be send
+				Input inputCfg = new Input("Configure");
+				ParameterSet<CommandParameter> pSetCfg = new ParameterSet<CommandParameter>();
+				
+				if( hwConf != null ){
+					try {
+						pSetCfg.add(new CommandParameter<StringT> ("hardwareConfigurationString", new StringT(hwConf)));
+						// Add FEDEnableMask to the IPM TCDS configuration parameters application
+						if(appName.contains("PI") )
+								pSetCfg.add(new CommandParameter<StringT>("fedEnableMask", new StringT(fedEnableMask)));
+					} catch (ParameterException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					inputCfg.setParameters(pSetCfg);
+					//send the message to XDAQ 		
+					try {
+						xdaqApp.execute(inputCfg, new String(functionManager.getName()), rcmsURL);
+					} catch (CommandException e) {
+						String errMsg = "Unable to send input to: " + xdaqApp.getRole() + ". Stacktrace: " + e.getMessage();
+						logger.error(errMsg);
+					}
+				}
+				else {
+					String errMsg = "No configuration found with name: " + confPar + ", in Resource Configurator for resource: " + xdaqApp.getRole(); 
+					logger.error(errMsg);
+				}
+				//timer.scheduleAtFixedRate(new LeaseTask(xdaqApp, new String(functionManager.getName())), LEASE_INIT_WAIT, LEASE_INTERVAL);
+			}	
+			// Configure TCDS ICIs and PIs
 
 	    logger.info("[GEMEventHandler configureAction] configureAction Executed");
 	}
