@@ -220,7 +220,7 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 
 
     @Override
-        public void init() throws rcms.fm.fw.EventHandlerException {
+    public void init() throws rcms.fm.fw.EventHandlerException {
 	functionManager = (GEMFunctionManager) getUserFunctionManager();
 	qualifiedGroup  = functionManager.getQualifiedGroup();
 	// Unique id for each configuration
@@ -237,6 +237,38 @@ public class GEMEventHandler extends UserStateNotificationHandler {
 	//GEMUtil.renderMainGui();
     }
 
+	public void destroy() {
+		functionManager = (GEMFunctionManager) getUserFunctionManager();
+		qualifiedGroup  = functionManager.getQualifiedGroup();
+
+		/*FROM CTPPS
+		if(timer!=null) {
+			timer.cancel(); 
+			timer = null;
+		}
+		*/
+		
+		// we destroy -> Halt TCDS ICIs/PIs
+		ListIterator<QualifiedResource> itr = functionManager.getXdaqTCDSAppIterator();
+		while(itr.hasNext()){
+			XdaqApplication xdaqApp = (XdaqApplication) itr.next();		
+			Input input = new Input("Halt");
+			try {
+				xdaqApp.execute(input, new String(functionManager.getName()), new String(functionManager.getURI().toURL().toString()));
+			} catch (CommandException e) {
+				String errMsg = "Unable to send input to: " + xdaqApp.getRole() + ". Stacktrace: " + e.getMessage();
+				logger.error(errMsg);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}					
+		}
+		
+		// debug
+		logger.debug("destroy() called: functionManager=" + functionManager );
+		//super.destroy();
+	}
+    
     public void initAction(Object obj) throws UserActionException {
 
 	if (obj instanceof StateNotification) {
